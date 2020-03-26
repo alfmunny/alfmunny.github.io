@@ -244,7 +244,6 @@
 <p>This note will introduce what is a neuron in Neural Networks.</p>
 <h2 id="House-Price"><a href="#House-Price" class="headerlink" title="House Price"></a>House Price</h2><p>We can start with a simple example: predicting house price. </p>
 <p>Supposing we have a dataset of house price:</p>
-<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -252,8 +251,7 @@
 <th>y(price)</th>
 </tr>
 </thead>
-<tbody>
-<tr>
+<tbody><tr>
 <td>30</td>
 <td>62</td>
 </tr>
@@ -277,26 +275,23 @@
 <td>125</td>
 <td>188</td>
 </tr>
-</tbody>
-</table>
-</div>
+</tbody></table>
 <img src="/2018/04/10/deeplearning-introduction/image-20180410181806109.png" class="" title="Predicting House Price">
+
+
+
 <p>The blue line in the plot is drawn to fit the points.</p>
 <p>We can describe the blue line as a function in two parts: A linear function and a activation function.</p>
 <p>According to the data, we can calculate the weight W and the bias b</p>
-<p>Linear function: </p>
-<script type="math/tex; mode=display">
-f(x) = Wx + b = 2.3x - 46</script><p>Activation function:</p>
-<script type="math/tex; mode=display">
-f(z) = max(z, 0)</script><p>Any input smaller than zero will output zero.</p>
-<p>Combine these two:</p>
-<script type="math/tex; mode=display">
-f(x) = max(Wx+b, 0)</script><p>A neuron is just like this function. It accepts the input x, and give the output y. It uses the activation function to transfer the linear interpolation of the points to a non-linear interpolation. </p>
+<p>Linear function:<br>$$<br>f(x) = Wx + b = 2.3x - 46<br>$$<br>Activation function:<br>$$<br>f(z) = max(z, 0)<br>$$<br>Any input smaller than zero will output zero.</p>
+<p>Combine these two:<br>$$<br>f(x) = max(Wx+b, 0)<br>$$<br>A neuron is just like this function. It accepts the input x, and give the output y. It uses the activation function to transfer the linear interpolation of the points to a non-linear interpolation. </p>
 <img src="/2018/04/10/deeplearning-introduction/image-20180410194650766.png" class="" title="neuron">
+
 <p>$f(z) = max(z, 0)$ is called <strong>Rectified Linear Unit</strong> (ReLU), which is used as activation function. There are some other activation funciton like sigmoid, tanh, leaky ReLu etc. They will be discussed in following articles.</p>
 <p>Provided this single neuron model, we can predict the price at a given x, here the size of the house.fg</p>
 <p>A Neural Network is to connect these neurons with diffrent input dimensons and parameters.</p>
 <img src="/2018/04/10/deeplearning-introduction/graph1.svg" class="" title="Neural Network">
+
 <h2 id="Standard-NN-CNN-and-RNN"><a href="#Standard-NN-CNN-and-RNN" class="headerlink" title="Standard NN, CNN and RNN"></a>Standard NN, CNN and RNN</h2><p>Convolutional Neural Network can be used on image problems.</p>
 <p>Recurrent Neural Network can be used on audio problems.</p>
 
@@ -523,8 +518,6 @@ f(x) = max(Wx+b, 0)</script><p>A neuron is just like this function. It accepts t
 
 
 
-
-  
 
   
 
