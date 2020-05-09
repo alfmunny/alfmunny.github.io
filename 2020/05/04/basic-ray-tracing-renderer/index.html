@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"alfmunny.com","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="‘Tinny Ray Tracer’ introduces the ray tracing under 300 lines code. It was a great fun to follow the instructions and made the renderer.  We learn the algorithm layer by layer, with one color at begin">
+<meta property="og:type" content="article">
+<meta property="og:title" content="A Basic Ray Tracing Renderer">
+<meta property="og:url" content="http://alfmunny.com/2020/05/04/basic-ray-tracing-renderer/index.html">
+<meta property="og:site_name" content="In The Shell">
+<meta property="og:description" content="‘Tinny Ray Tracer’ introduces the ray tracing under 300 lines code. It was a great fun to follow the instructions and made the renderer.  We learn the algorithm layer by layer, with one color at begin">
+<meta property="og:image" content="http://alfmunny.com/2020/05/04/basic-ray-tracing-renderer/final.jpg">
+<meta property="og:image" content="http://alfmunny.com/2020/05/04/basic-ray-tracing-renderer/step1.jpg">
+<meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/8/83/Ray_trace_diagram.svg">
+<meta property="og:image" content="http://alfmunny.com/2020/05/04/basic-ray-tracing-renderer/raysphereisect1.png">
+<meta property="og:image" content="http://alfmunny.com/2020/05/04/basic-ray-tracing-renderer/rayspherecases.png">
+<meta property="article:published_time" content="2020-05-03T22:41:31.308Z">
+<meta property="article:modified_time" content="2020-05-03T22:41:31.310Z">
+<meta property="article:author" content="Alfmunny">
+<meta property="article:tag" content="C++">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://alfmunny.com/2020/05/04/basic-ray-tracing-renderer/final.jpg">
+
+<link rel="canonical" href="http://alfmunny.com/2020/05/04/basic-ray-tracing-renderer/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true
+  };
+</script>
+
+  <title>A Basic Ray Tracing Renderer | In The Shell</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">In The Shell</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="default">
+    <link itemprop="mainEntityOfPage" href="http://alfmunny.com/2020/05/04/basic-ray-tracing-renderer/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Alfmunny">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="In The Shell">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          A Basic Ray Tracing Renderer
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-05-04 00:41:31" itemprop="dateCreated datePublished" datetime="2020-05-04T00:41:31+02:00">2020-05-04</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Computer/" itemprop="url" rel="index"><span itemprop="name">Computer</span></a>
+                </span>
+                  , 
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Computer/Game-Engine/" itemprop="url" rel="index"><span itemprop="name">Game Engine</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus: </span>
+    
+    <a title="disqus" href="/2020/05/04/basic-ray-tracing-renderer/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/05/04/basic-ray-tracing-renderer/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><a href="https://github.com/ssloy/tinyraytracer" target="_blank" rel="noopener">‘Tinny Ray Tracer’</a> introduces the ray tracing under 300 lines code.
+It was a great fun to follow the instructions and made the renderer. 
+We learn the algorithm layer by layer, with one color at beginning, then with diffusion, reflection and refraction at last.</p>
+<p>This article add some extended notes and resources together 
+for a thorough understanding of geometric calculation along with ray tracing.</p>
+<img src="/2020/05/04/basic-ray-tracing-renderer/final.jpg" class="" title="Tiny Renderer">
+
+<a id="more"></a>
+
+<h2 id="Preparation"><a href="#Preparation" class="headerlink" title="Preparation"></a>Preparation</h2><p>All we need is C++ and a bit theory of ray tracing, no other fancy libraries.
+We can dive into the core directly without any configuration of OpenGL.
+In order to keep it simple, we will render the image into a file, instead of using OpenGL to draw in the window.</p>
+<p>To make the programming with multi-dimensional vectors easy, we would better to define some templates for vectors.</p>
+<p>You can skip this part and just include “geometry.h”. 
+It is not essential, for implementing the main part.</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cassert&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cmath&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">size_t</span> DIM , <span class="keyword">typename</span> T&gt; <span class="class"><span class="keyword">struct</span> <span class="title">vec</span> &#123;</span></span><br><span class="line">  vec() &#123; <span class="keyword">for</span> (<span class="keyword">size_t</span> i=DIM; i--; data_[i] = T()); &#125;</span><br><span class="line">  T&amp; <span class="keyword">operator</span>[](<span class="keyword">const</span> <span class="keyword">size_t</span> i) &#123; assert(i&lt;DIM); <span class="keyword">return</span> data_[i]; &#125;</span><br><span class="line">  <span class="keyword">const</span> T&amp; <span class="keyword">operator</span>[](<span class="keyword">const</span> <span class="keyword">size_t</span> i) <span class="keyword">const</span> &#123; assert(i&lt;DIM); <span class="keyword">return</span> data_[i]; &#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">  T data_[DIM];</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> vec&lt;<span class="number">2</span>, <span class="keyword">float</span>&gt; Vec2f;</span><br><span class="line"><span class="keyword">typedef</span> vec&lt;<span class="number">3</span>, <span class="keyword">float</span>&gt; Vec3f;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt; <span class="class"><span class="keyword">struct</span> <span class="title">vec</span>&lt;3, T&gt; &#123;</span></span><br><span class="line">  vec() : x(T()), y(T()), z(T()) &#123;&#125;</span><br><span class="line">  vec(T X, T Y, T Z) : x(X), y(Y), z(Z) &#123;&#125;</span><br><span class="line">  T&amp; <span class="keyword">operator</span>[](<span class="keyword">const</span> <span class="keyword">size_t</span> i) &#123; assert(i&lt;<span class="number">3</span>); <span class="keyword">return</span> i&lt;=<span class="number">0</span> ? x : (<span class="number">1</span>==i ? y : z); &#125;</span><br><span class="line">  <span class="keyword">const</span> T&amp; <span class="keyword">operator</span>[](<span class="keyword">const</span> <span class="keyword">size_t</span> i) <span class="keyword">const</span> &#123; assert(i&lt;<span class="number">3</span>); <span class="keyword">return</span> i&lt;=<span class="number">0</span> ? x : (<span class="number">1</span>==i ? y : z); &#125;</span><br><span class="line">  T x,y,z;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Step-1-Draw-an-image-with-colors"><a href="#Step-1-Draw-an-image-with-colors" class="headerlink" title="Step 1: Draw an image with colors"></a>Step 1: Draw an image with colors</h2><p>Let’s simply paint some color first, and output it to a pixmap file. 
+We use <a href="https://en.wikipedia.org/wiki/Netpbm" target="_blank" rel="noopener">PPM</a>. It is a very simple format for pixmap.</p>
+<p>The file format looks like this:</p>
+<pre><code>P6        // this is the format name
+1024 768  // height and width of the image
+255       // use 256-color
+0 0 0 120 120 0 .... // RGB color number</code></pre><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line">&lt;&lt;geometry&gt;&gt;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cmath&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fstream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">output</span><span class="params">(<span class="keyword">const</span> <span class="keyword">int</span> <span class="built_in">width</span>, <span class="keyword">const</span> <span class="keyword">int</span> <span class="built_in">height</span>, <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;Vec3f&gt; framebuffer)</span> </span>&#123;</span><br><span class="line">  <span class="built_in">std</span>::ofstream ofs; <span class="comment">// save the framebuffer to file</span></span><br><span class="line">  ofs.<span class="built_in">open</span>(<span class="string">"./out.ppm"</span>);</span><br><span class="line">  ofs &lt;&lt; <span class="string">"P6\n"</span> &lt;&lt; <span class="built_in">width</span> &lt;&lt; <span class="string">" "</span> &lt;&lt; <span class="built_in">height</span> &lt;&lt; <span class="string">"\n255\n"</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; <span class="built_in">height</span>*<span class="built_in">width</span>; ++i) &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">size_t</span> j = <span class="number">0</span>; j &lt; <span class="number">3</span>; ++j) &#123;</span><br><span class="line">      ofs &lt;&lt; (<span class="keyword">char</span>)(<span class="number">255</span> * <span class="built_in">std</span>::<span class="built_in">max</span>(<span class="number">0.f</span>, <span class="built_in">std</span>::<span class="built_in">min</span>(<span class="number">1.f</span>, framebuffer[i][j])));</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  ofs.<span class="built_in">close</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">render</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> <span class="keyword">int</span> <span class="built_in">width</span> = <span class="number">1024</span>;</span><br><span class="line">  <span class="keyword">const</span> <span class="keyword">int</span> <span class="built_in">height</span> = <span class="number">768</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// framebuffer to store RGB data of all pixels</span></span><br><span class="line">  <span class="function"><span class="built_in">std</span>::<span class="built_in">vector</span>&lt;Vec3f&gt; <span class="title">framebuffer</span><span class="params">(<span class="built_in">width</span>*<span class="built_in">height</span>)</span></span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">size_t</span> j = <span class="number">0</span>; j &lt; <span class="built_in">height</span>; j++) &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; <span class="built_in">width</span>; i++) &#123;</span><br><span class="line">      framebuffer[i+j*<span class="built_in">width</span>] = Vec3f(j/<span class="keyword">float</span>(<span class="built_in">height</span>), i/<span class="keyword">float</span>(<span class="built_in">width</span>), <span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  output(<span class="built_in">width</span>, <span class="built_in">height</span>, framebuffer);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  render();</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>You should see this result:</p>
+<img src="/2020/05/04/basic-ray-tracing-renderer/step1.jpg" class="" title="Step 1: create an image">
+
+<h2 id="Step-2-Draw-a-sphere"><a href="#Step-2-Draw-a-sphere" class="headerlink" title="Step 2: Draw a sphere"></a>Step 2: Draw a sphere</h2><p>Here comes the main part: Ray Tracing.</p>
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/8/83/Ray_trace_diagram.svg" alt="How Ray Tracing Works"></p>
+<blockquote>
+<p>It works by tracing a path from an imaginary eye through each pixel in a virtual screen,
+and calculating the color of the object visible through it.</p>
+</blockquote>
+<p>Each ray must be tested for intersection with some object in the scene. 
+Once the nearest object has been identified, the algorithm will estimate 
+the incoming light at the point of intersect and calculate the final color of that pixel.</p>
+<p>If the ray encounters a reflective or translucent materials, 
+it requires more rays to re-cast(recursion problem) from that point into the scene.</p>
+<p>We need a sphere. To represent a sphere, we only need a 3-dim vector to mark its center,
+and a scalar to determine its radius.</p>
+<p>We also need a function to check the intersection.</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Sphere</span> &#123;</span></span><br><span class="line">    Vec3f center; </span><br><span class="line">    <span class="keyword">float</span> radius;</span><br><span class="line"></span><br><span class="line">    Sphere(<span class="keyword">const</span> Vec3f &amp;c, <span class="keyword">const</span> <span class="keyword">float</span> &amp;r) : center(c), radius(r) &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">ray_intersect</span><span class="params">(<span class="keyword">const</span> Vec3f &amp;orig, <span class="keyword">const</span> Vec3f &amp;dir, <span class="keyword">float</span> &amp;t0)</span> <span class="keyword">const</span> </span>&#123;</span><br><span class="line">        Vec3f L = center - orig;</span><br><span class="line">        <span class="keyword">float</span> tca = L*dir;</span><br><span class="line">        <span class="keyword">float</span> d2 = L*L - tca*tca;</span><br><span class="line">        <span class="keyword">if</span> (d2 &gt; radius*radius) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        <span class="keyword">float</span> thc = <span class="built_in">sqrt</span>(radius*radius - d2);</span><br><span class="line">        t0 = tca - thc;</span><br><span class="line">        <span class="keyword">float</span> t1 = tca + thc;</span><br><span class="line">        <span class="keyword">if</span> (t0 &lt; <span class="number">0</span>) t0 = t1;</span><br><span class="line">        <span class="keyword">if</span> (t0 &lt; <span class="number">0</span>) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br></pre></td></tr></table></figure>
+
+<p>To check if a ray intersect a sphere, we draw a line through center, perpendicular to the ray.
+The length of of this line is <code>d</code>. We only have to check if <code>d</code> larger or smaller then the radius.</p>
+<img src="/2020/05/04/basic-ray-tracing-renderer/raysphereisect1.png" class="" title="Line Sphere Intersection">
+
+
+<p>There are three types of intersection with the ray:</p>
+<ol>
+<li>light source is before the sphere</li>
+<li>light source is in the sphere</li>
+<li>light source is behind the sphere</li>
+</ol>
+<p><img src="/2020/05/04/basic-ray-tracing-renderer/rayspherecases.png" class="" title="“Types of Intersection” %)&lt;&#x2F;p&gt;">
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/C/" rel="tag"># C++</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/05/01/book_notes/fluent_python/Chapter-1-The-Python-Data-Model/" rel="prev" title="Fluent Python - Chapter 1. The Python Data Model">
+      <i class="fa fa-chevron-left"></i> Fluent Python - Chapter 1. The Python Data Model
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Preparation"><span class="nav-number">1.</span> <span class="nav-text">Preparation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Step-1-Draw-an-image-with-colors"><span class="nav-number">2.</span> <span class="nav-text">Step 1: Draw an image with colors</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Step-2-Draw-a-sphere"><span class="nav-number">3.</span> <span class="nav-text">Step 2: Draw a sphere</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Alfmunny</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/alfmunny" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;alfmunny" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:alfmunny@gmail.com" title="E-Mail → mailto:alfmunny@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/alfmunny" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;alfmunny" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i></a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://alfmunny.com/notes-blog" title="http:&#x2F;&#x2F;alfmunny.com&#x2F;notes-blog">Notes In The Shell</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://alfmunny.com/leetcode-blog" title="http:&#x2F;&#x2F;alfmunny.com&#x2F;leetcode-blog">LeetCode In The Shell</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alfmunny</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> v4.2.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">Theme – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.7.2
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://alfmunnystechblog.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "http://alfmunny.com/2020/05/04/basic-ray-tracing-renderer/";
+    this.page.identifier = "2020/05/04/basic-ray-tracing-renderer/";
+    this.page.title = "A Basic Ray Tracing Renderer";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://alfmunnystechblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+</body>
+</html>
