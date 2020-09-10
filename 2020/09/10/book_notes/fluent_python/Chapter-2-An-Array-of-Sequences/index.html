@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"alfmunny.com","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Container sequences: can hold different types. They contain references to the objects.  list, tuple, collections.deque  Flat sequences: can hold one type. They physically sotre the value.  str, bytes,">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Fluent Python - Chapter 2. An Array of Sequences">
+<meta property="og:url" content="http://alfmunny.com/2020/09/10/book_notes/fluent_python/Chapter-2-An-Array-of-Sequences/index.html">
+<meta property="og:site_name" content="In The Shell">
+<meta property="og:description" content="Container sequences: can hold different types. They contain references to the objects.  list, tuple, collections.deque  Flat sequences: can hold one type. They physically sotre the value.  str, bytes,">
+<meta property="article:published_time" content="2020-09-10T21:30:00.000Z">
+<meta property="article:modified_time" content="2020-09-10T22:03:44.503Z">
+<meta property="article:author" content="Alfmunny">
+<meta property="article:tag" content="Python">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://alfmunny.com/2020/09/10/book_notes/fluent_python/Chapter-2-An-Array-of-Sequences/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true
+  };
+</script>
+
+  <title>Fluent Python - Chapter 2. An Array of Sequences | In The Shell</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">In The Shell</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="default">
+    <link itemprop="mainEntityOfPage" href="http://alfmunny.com/2020/09/10/book_notes/fluent_python/Chapter-2-An-Array-of-Sequences/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Alfmunny">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="In The Shell">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Fluent Python - Chapter 2. An Array of Sequences
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-09-10 23:30:00" itemprop="dateCreated datePublished" datetime="2020-09-10T23:30:00+02:00">2020-09-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-09-11 00:03:44" itemprop="dateModified" datetime="2020-09-11T00:03:44+02:00">2020-09-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Book-Notes/" itemprop="url" rel="index"><span itemprop="name">Book Notes</span></a>
+                </span>
+                  , 
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Book-Notes/Fluent-Python/" itemprop="url" rel="index"><span itemprop="name">Fluent Python</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus: </span>
+    
+    <a title="disqus" href="/2020/09/10/book_notes/fluent_python/Chapter-2-An-Array-of-Sequences/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/09/10/book_notes/fluent_python/Chapter-2-An-Array-of-Sequences/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Container sequences: can hold different types. They contain references to the objects.</p>
+<blockquote>
+<p>list, tuple, collections.deque</p>
+</blockquote>
+<p>Flat sequences: can hold one type. They physically sotre the value.</p>
+<blockquote>
+<p>str, bytes, bytearray, memoryview, array.array</p>
+</blockquote>
+<p>Another way of grouping:</p>
+<p>Mutable seuqences:</p>
+<blockquote>
+<p>list, byte, array.array, collections.deque and memoryview</p>
+</blockquote>
+<p>Immutable sequences:</p>
+<blockquote>
+<p>tuple, str, bytes</p>
+</blockquote>
+<a id="more"></a>
+
+<h2 id="List-Comprehensions-and-Generator-Expressions"><a href="#List-Comprehensions-and-Generator-Expressions" class="headerlink" title="List Comprehensions and Generator Expressions"></a>List Comprehensions and Generator Expressions</h2><p><strong>Readability</strong></p>
+<p>List comprehension is meant to do one thing only: to build a new list. It is possible to abuse it to write very incomprehensible code, you should avoid it.</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">symbols = <span class="string">'$¢£¥€¤'</span></span><br><span class="line">codes = [ord(symbol) <span class="keyword">for</span> symbol <span class="keyword">in</span> symbols]</span><br><span class="line">codes</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">[<span class="number">36</span>, <span class="number">162</span>, <span class="number">163</span>, <span class="number">165</span>, <span class="number">8364</span>, <span class="number">164</span>]</span><br></pre></td></tr></table></figure>
+
+<p>No leak in Python 3</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">x = <span class="string">'ABC'</span></span><br><span class="line">dummy = [ord(x) <span class="keyword">for</span> x <span class="keyword">in</span> x]</span><br><span class="line">x</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">ABC</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">dummy</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">[<span class="number">65</span>, <span class="number">66</span>, <span class="number">67</span>]</span><br></pre></td></tr></table></figure>
+
+<p><strong>Versus map and filter</strong></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">beyond_ascii = [ord(s) <span class="keyword">for</span> s <span class="keyword">in</span> symbols <span class="keyword">if</span> ord(s) &gt; <span class="number">127</span>]</span><br><span class="line">beyond_ascii</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">[<span class="number">162</span>, <span class="number">163</span>, <span class="number">165</span>, <span class="number">8364</span>, <span class="number">164</span>]</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">beyond_ascii = list(filter(<span class="keyword">lambda</span> c: c &gt; <span class="number">127</span>, map(ord, symbols)))</span><br><span class="line">beyond_ascii</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">[<span class="number">162</span>, <span class="number">163</span>, <span class="number">165</span>, <span class="number">8364</span>, <span class="number">164</span>]</span><br></pre></td></tr></table></figure>
+
+<p><strong>Cartesian Products</strong></p>
+<p>Multiple Loops</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">colors = [<span class="string">'black'</span>, <span class="string">'white'</span>]</span><br><span class="line">sizes = [<span class="string">'S'</span>, <span class="string">'M'</span>, <span class="string">'L'</span>]</span><br><span class="line">tshirts = [(color, size) <span class="keyword">for</span> color <span class="keyword">in</span> colors <span class="keyword">for</span> size <span class="keyword">in</span> sizes]</span><br><span class="line">tshirts</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">[(<span class="string">'black'</span>, <span class="string">'S'</span>), (<span class="string">'black'</span>, <span class="string">'M'</span>), (<span class="string">'black'</span>, <span class="string">'L'</span>), (<span class="string">'white'</span>, <span class="string">'S'</span>), (<span class="string">'white'</span>, <span class="string">'M'</span>), (<span class="string">'white'</span>, <span class="string">'L'</span>)]</span><br></pre></td></tr></table></figure>
+
+<p>We can also arrange them by size</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">colors = [<span class="string">'black'</span>, <span class="string">'white'</span>]</span><br><span class="line">sizes = [<span class="string">'S'</span>, <span class="string">'M'</span>, <span class="string">'L'</span>]</span><br><span class="line">tshirts = [(color, size) <span class="keyword">for</span> size <span class="keyword">in</span> sizes <span class="keyword">for</span> color <span class="keyword">in</span> colors]</span><br><span class="line">tshirts</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">[(<span class="string">'black'</span>, <span class="string">'S'</span>), (<span class="string">'white'</span>, <span class="string">'S'</span>), (<span class="string">'black'</span>, <span class="string">'M'</span>), (<span class="string">'white'</span>, <span class="string">'M'</span>), (<span class="string">'black'</span>, <span class="string">'L'</span>), (<span class="string">'white'</span>, <span class="string">'L'</span>)]</span><br></pre></td></tr></table></figure>
+
+<p><strong>Generator Expressions</strong> To initialize tuples, arrays, and other tyoes of sequences, you can use Generator Expressions (genexps).</p>
+<p>Genexps saves memory because it yields items one by one.</p>
+<p>Generator Expressions use the same syntax as list comprehension, but are enclosed in parentheses rather than brackets.</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">symobls = <span class="string">'$¢£¥€¤'</span></span><br><span class="line">tuple(ord(symbol) <span class="keyword">for</span> symbol <span class="keyword">in</span> symbols)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">(<span class="number">36</span>, <span class="number">162</span>, <span class="number">163</span>, <span class="number">165</span>, <span class="number">8364</span>, <span class="number">164</span>)</span><br></pre></td></tr></table></figure>
+
+<p>If you have millions of items, only to feed the loop, genexp can save the expense of building a list for that.</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">colors = [<span class="string">'black'</span>, <span class="string">'white'</span>]</span><br><span class="line">sizes = [<span class="string">'S'</span>, <span class="string">'M'</span>, <span class="string">'L'</span>]</span><br><span class="line"><span class="keyword">for</span> tshirt <span class="keyword">in</span> (<span class="string">'%s %s'</span> % (c, s) <span class="keyword">for</span> c <span class="keyword">in</span> colors <span class="keyword">for</span> s <span class="keyword">in</span> sizes):</span><br><span class="line">    print(tshirt)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">black S</span><br><span class="line">black M</span><br><span class="line">black L</span><br><span class="line">white S</span><br><span class="line">white M</span><br><span class="line">white L</span><br></pre></td></tr></table></figure>
+
+<h2 id="Tuples-Ate-Not-Just-Immutable-Lists"><a href="#Tuples-Ate-Not-Just-Immutable-Lists" class="headerlink" title="Tuples Ate Not Just Immutable Lists"></a>Tuples Ate Not Just Immutable Lists</h2><p>Tuples do double duty:</p>
+<ol>
+<li>immutable lists</li>
+<li>as records with no field names</li>
+</ol>
+<h3 id="Tuple-as-Records"><a href="#Tuple-as-Records" class="headerlink" title="Tuple as Records"></a>Tuple as Records</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">lax_coordinates = (<span class="number">33.9425</span>, <span class="number">-118.408056</span>)</span><br><span class="line">city, year, pop, chg, area = (<span class="string">'Tokyo'</span>, <span class="number">2003</span>, <span class="number">32450</span>, <span class="number">0.66</span>, <span class="number">8014</span>)</span><br><span class="line">traveler_ids = [(<span class="string">'USA'</span>, <span class="string">'31195855'</span>), (<span class="string">'BRA'</span>, <span class="string">'CE342567'</span>), (<span class="string">'ESP'</span>, <span class="string">'XDA205856'</span>)]</span><br><span class="line"><span class="keyword">for</span> passport <span class="keyword">in</span> sorted(traveler_ids):</span><br><span class="line">    print(<span class="string">"%s/%s"</span> % passport)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">BRA/CE342567</span><br><span class="line">ESP/XDA205856</span><br><span class="line">USA/<span class="number">31195855</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> country, _ <span class="keyword">in</span> traveler_ids:</span><br><span class="line">    print(country)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">USA</span><br><span class="line">BRA</span><br><span class="line">ESP</span><br></pre></td></tr></table></figure>
+
+<h3 id="Tuple-Unpacking"><a href="#Tuple-Unpacking" class="headerlink" title="Tuple Unpacking"></a>Tuple Unpacking</h3><p><strong>parallel assignment</strong></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">lax_coordinates = (<span class="number">33.9425</span>, <span class="number">-118.408056</span>)</span><br><span class="line">latitude, longitude = lax_coordinates</span><br><span class="line">latitude</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="number">33.9425</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">longitude</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="number">-118.408056</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>swap</strong></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">a = <span class="number">1</span></span><br><span class="line">b = <span class="number">2</span></span><br><span class="line">b, a = a, b</span><br><span class="line">print(a, b)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="number">2</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>Prefixing an argument with a start</strong></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">divmod(<span class="number">20</span>, <span class="number">8</span>)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">(<span class="number">2</span>, <span class="number">4</span>)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">t = (<span class="number">20</span>, <span class="number">8</span>)</span><br><span class="line">divmod(*t)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">(<span class="number">2</span>, <span class="number">4</span>)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">quotient, remainder = divmod(*t)</span><br><span class="line">quotient, remainder</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">(<span class="number">2</span>, <span class="number">4</span>)</span><br></pre></td></tr></table></figure>
+
+<p><strong>Focus on certain part</strong></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line">_, filename = os.path.split(<span class="string">'/home/luciano/.ssh/idrsa.pub'</span>)</span><br><span class="line">filename</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">idrsa.pub</span><br></pre></td></tr></table></figure>
+
+<p><strong>Using * to grab excess items</strong></p>
+<p>Without a *, it ignore the rest elements while unpacking.</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">a, b, rest = range(<span class="number">5</span>)</span><br><span class="line">a, b, rest</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">(<span class="number">0</span>, <span class="number">1</span>, [<span class="number">2</span>])</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">a, b, *rest = range(<span class="number">5</span>)</span><br><span class="line">a, b, rest</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">(<span class="number">0</span>, <span class="number">1</span>, [<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>])</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">a,  b, *rest = range(<span class="number">3</span>)</span><br><span class="line">a, b, rest</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">(<span class="number">0</span>, <span class="number">1</span>, [<span class="number">2</span>])</span><br></pre></td></tr></table></figure>
+
+<p>Any place</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">a, *body, c, d = range(<span class="number">5</span>)</span><br><span class="line">a, body, c, d</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">(<span class="number">0</span>, [<span class="number">1</span>, <span class="number">2</span>], <span class="number">3</span>, <span class="number">4</span>)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">*head, b, c, d = range(<span class="number">5</span>)</span><br><span class="line">head, b, c, d</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">([<span class="number">0</span>, <span class="number">1</span>], <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="Nested-Tuple-Unpacking"><a href="#Nested-Tuple-Unpacking" class="headerlink" title="Nested Tuple Unpacking"></a>Nested Tuple Unpacking</h3><p>Unpacking nested tuple, like (a, b, (c, d))</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">metro_areas = [</span><br><span class="line">    (<span class="string">'Tokyo'</span>, <span class="string">'JP'</span>, <span class="number">36.933</span>, (<span class="number">35.689722</span>, <span class="number">139.691667</span>)),</span><br><span class="line">    (<span class="string">'Delhi NCR'</span>, <span class="string">'IN'</span>, <span class="number">21.935</span>, (<span class="number">28.613889</span>, <span class="number">77.208889</span>)),</span><br><span class="line">    (<span class="string">'Mexico City'</span>, <span class="string">'MX'</span>, <span class="number">20.142</span>, (<span class="number">19.433333</span>, <span class="number">-99.133333</span>)),</span><br><span class="line">    (<span class="string">'New York-Newark'</span>, <span class="string">'US'</span>, <span class="number">20.104</span>, (<span class="number">40.808611</span>, <span class="number">-74.020386</span>)),</span><br><span class="line">    (<span class="string">'Sao Paulo'</span>, <span class="string">'BR'</span>, <span class="number">19.649</span>, (<span class="number">-23.547778</span>, <span class="number">-46.635833</span>)),</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">print(<span class="string">'&#123;:15&#125; | &#123;:^9&#125; | &#123;:^9&#125;'</span>.format(<span class="string">''</span>, <span class="string">'lat.'</span>, <span class="string">'long.'</span>))</span><br><span class="line">fmt = <span class="string">'&#123;:15&#125; | &#123;:9.4f&#125; | &#123;:9.4f&#125;'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> name, cc, pop, (latitude, longitude) <span class="keyword">in</span> metro_areas:</span><br><span class="line">    <span class="keyword">if</span> longitude &lt;= <span class="number">0</span>:</span><br><span class="line">        print(fmt.format(name, latitude, longitude))</span><br></pre></td></tr></table></figure>
+
+<pre><code>                |   lat.    |   long.  
+Mexico City     |   19.4333 |  -99.1333
+New York-Newark |   40.8086 |  -74.0204
+Sao Paulo       |  -23.5478 |  -46.6358</code></pre>
+<h3 id="Named-Tuples"><a href="#Named-Tuples" class="headerlink" title="Named Tuples"></a>Named Tuples</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> namedtuple</span><br><span class="line">City = namedtuple(<span class="string">'City'</span>, <span class="string">'name country population coordinates'</span>)</span><br><span class="line">tokyo = City(<span class="string">'Tokyo'</span>, <span class="string">'JP'</span>, <span class="number">36.933</span>, (<span class="number">35.689722</span>, <span class="number">139.691667</span>))</span><br><span class="line">tokyo</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">City(name=<span class="string">'Tokyo'</span>, country=<span class="string">'JP'</span>, population=<span class="number">36.933</span>, coordinates=(<span class="number">35.689722</span>, <span class="number">139.691667</span>))</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">tokyo.population</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="number">36.933</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">tokyo.coordinates</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">(<span class="number">35.689722</span>, <span class="number">139.691667</span>)</span><br></pre></td></tr></table></figure>
+
+<p>Named tuple attributes</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">City._fields</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">(<span class="string">'name'</span>, <span class="string">'country'</span>, <span class="string">'population'</span>, <span class="string">'coordinates'</span>)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">LatLong = namedtuple(<span class="string">'LatLong'</span>, <span class="string">'lat long'</span>)</span><br><span class="line">delhi_data = (<span class="string">'Delhi NCR'</span>, <span class="string">'IN'</span>, <span class="number">21.935</span>, LatLong(<span class="number">28.613889</span>, <span class="number">77.208889</span>))</span><br><span class="line">delhi = City._make(delhi_data)</span><br><span class="line">delhi._asdict()</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">OrderedDict([(<span class="string">'name'</span>, <span class="string">'Delhi NCR'</span>), (<span class="string">'country'</span>, <span class="string">'IN'</span>), (<span class="string">'population'</span>, <span class="number">21.935</span>), (<span class="string">'coordinates'</span>, LatLong(lat=<span class="number">28.613889</span>, long=<span class="number">77.208889</span>))])</span><br></pre></td></tr></table></figure>
+
+<p>You can also use *.</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">delhi = City(*delhi_data)</span><br><span class="line">delhi</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">City(name=<span class="string">'Delhi NCR'</span>, country=<span class="string">'IN'</span>, population=<span class="number">21.935</span>, coordinates=LatLong(lat=<span class="number">28.613889</span>, long=<span class="number">77.208889</span>))</span><br></pre></td></tr></table></figure>
+
+<h3 id="Tuple-as-Immutable-Lists"><a href="#Tuple-as-Immutable-Lists" class="headerlink" title="Tuple as Immutable Lists"></a>Tuple as Immutable Lists</h3><p>Tuple supports all list methods that do not involve adding or removing items, like</p>
+<blockquote>
+<p>s.__iadd__, s.__append__. s.clear(), s.copy(), s.__delitem__, s.__insert__, s.__imul__, s.__reversed__()</p>
+</blockquote>
+<p>reversed(tuple) works without s.__reversed__. (list has it only for optimization)</p>
+<h2 id="Slicing"><a href="#Slicing" class="headerlink" title="Slicing"></a>Slicing</h2><h2 id="Using-and-with-Sequences"><a href="#Using-and-with-Sequences" class="headerlink" title="Using + and * with Sequences"></a>Using + and * with Sequences</h2><h2 id="Augmented-Assignment-with-Sequences"><a href="#Augmented-Assignment-with-Sequences" class="headerlink" title="Augmented Assignment with Sequences"></a>Augmented Assignment with Sequences</h2><h2 id="Managing-Ordered-Sequences-with-bisect"><a href="#Managing-Ordered-Sequences-with-bisect" class="headerlink" title="Managing Ordered Sequences with bisect"></a>Managing Ordered Sequences with bisect</h2><h2 id="When-a-List-is-Not-the-Answer"><a href="#When-a-List-is-Not-the-Answer" class="headerlink" title="When a List is Not the Answer"></a>When a List is Not the Answer</h2>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Python/" rel="tag"># Python</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/05/04/basic-ray-tracing-renderer/" rel="prev" title="A Basic Ray Tracing Renderer">
+      <i class="fa fa-chevron-left"></i> A Basic Ray Tracing Renderer
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#List-Comprehensions-and-Generator-Expressions"><span class="nav-number">1.</span> <span class="nav-text">List Comprehensions and Generator Expressions</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Tuples-Ate-Not-Just-Immutable-Lists"><span class="nav-number">2.</span> <span class="nav-text">Tuples Ate Not Just Immutable Lists</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Tuple-as-Records"><span class="nav-number">2.1.</span> <span class="nav-text">Tuple as Records</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Tuple-Unpacking"><span class="nav-number">2.2.</span> <span class="nav-text">Tuple Unpacking</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Nested-Tuple-Unpacking"><span class="nav-number">2.3.</span> <span class="nav-text">Nested Tuple Unpacking</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Named-Tuples"><span class="nav-number">2.4.</span> <span class="nav-text">Named Tuples</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Tuple-as-Immutable-Lists"><span class="nav-number">2.5.</span> <span class="nav-text">Tuple as Immutable Lists</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Slicing"><span class="nav-number">3.</span> <span class="nav-text">Slicing</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Using-and-with-Sequences"><span class="nav-number">4.</span> <span class="nav-text">Using + and * with Sequences</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Augmented-Assignment-with-Sequences"><span class="nav-number">5.</span> <span class="nav-text">Augmented Assignment with Sequences</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Managing-Ordered-Sequences-with-bisect"><span class="nav-number">6.</span> <span class="nav-text">Managing Ordered Sequences with bisect</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#When-a-List-is-Not-the-Answer"><span class="nav-number">7.</span> <span class="nav-text">When a List is Not the Answer</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Alfmunny</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/alfmunny" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;alfmunny" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:alfmunny@gmail.com" title="E-Mail → mailto:alfmunny@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/alfmunny" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;alfmunny" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i></a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://alfmunny.com/notes-blog" title="http:&#x2F;&#x2F;alfmunny.com&#x2F;notes-blog">Notes In The Shell</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://alfmunny.com/leetcode-blog" title="http:&#x2F;&#x2F;alfmunny.com&#x2F;leetcode-blog">LeetCode In The Shell</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alfmunny</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> v4.2.1
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">Theme – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.7.2
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://alfmunnystechblog.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "http://alfmunny.com/2020/09/10/book_notes/fluent_python/Chapter-2-An-Array-of-Sequences/";
+    this.page.identifier = "2020/09/10/book_notes/fluent_python/Chapter-2-An-Array-of-Sequences/";
+    this.page.title = "Fluent Python - Chapter 2. An Array of Sequences";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://alfmunnystechblog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+</body>
+</html>
